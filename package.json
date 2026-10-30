@@ -1,6 +1,6 @@
 {
   "name": "@ueberbrot/skills",
-  "version": "1.0.0-dev",
+  "version": "1.0.0",
   "private": true,
   "description": "Agent skills and shared development tooling.",
   "license": "ISC",

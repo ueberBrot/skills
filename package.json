@@ -1,0 +1,49 @@
+{
+  "name": "@ueberbrot/skills",
+  "version": "1.0.0-dev",
+  "private": true,
+  "description": "Agent skills and shared development tooling.",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ueberbrot/skills.git"
+  },
+  "type": "module",
+  "scripts": {
+    "prepare": "bun run effect-tsgo patch --no-typescript --tsrs --oxlint"
+  },
+  "dependencies": {
+    "@effect/platform-bun": "4.0.7",
+    "@tanstack/ai": "1.0.0",
+    "@tanstack/ai-codex": "1.0.0",
+    "@tanstack/ai-sandbox": "1.0.0",
+    "@tanstack/ai-sandbox-local-process": "1.0.0",
+    "effect": "4.0.7"
+  },
+  "devDependencies": {
+    "@changesets/cli": "3.0.3",
+    "@effect/tsgo": "0.63.0",
+    "@effect/vitest": "4.0.7",
+    "@tanstack/intent": "0.5.6",
+    "@types/bun": "1.4.4",
+    "eslint-plugin-github": "6.1.2",
+    "eslint-plugin-sonarjs": "4.2.2",
+    "eslint-plugin-tsdoc": "0.5.4",
+    "fallow": "3.37.0",
+    "tsrs": "0.20.1-ts7.1.0-beta",
+    "ultracite": "8.1.0",
+    "vite-plus": "1.4.0",
+    "vitest": "5.0.5"
+  },
+  "engines": {
+    "bun": ">=1.4.4"
+  },
+  "packageManager": "bun@1.4.4",
+  "intent": {
+    "skills": [
+      "@tanstack/ai",
+      "@tanstack/ai-sandbox",
+      "fallow"
+    ]
+  }
+}

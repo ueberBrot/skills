@@ -1,0 +1,236 @@
+{
+  "name": "clear-writing-development-pilot-1",
+  "skill": "../../skills/clear-writing",
+  "fixtures": "fixtures.json",
+  "checks": "checks.json",
+  "short_prompt": "compact-skill.txt",
+  "anchor_helper": "../../skills/clear-writing/scripts/check_anchors.py",
+  "cases": [
+    {
+      "id": "en-release-update",
+      "language": "en",
+      "task": "editing-technical",
+      "split": "development",
+      "provenance": "Synthetic fictional workplace task authored for pilot calibration on 2026-10-29; no real organization or measured outcome.",
+      "anchors": [
+        "LedgerSync",
+        "v2.8.1",
+        "HTTP 429",
+        "INC-482"
+      ],
+      "references": [
+        "references/messages.md"
+      ],
+      "reader_questions": [
+        "Has the suspected cause of the HTTP 429 responses been confirmed?",
+        "What must happen before the initial rollout, and how broad may it be?",
+        "What is still needed before the wider rollout, and is its date known?"
+      ]
+    },
+    {
+      "id": "en-customer-credit",
+      "language": "en",
+      "task": "drafting-business",
+      "split": "development",
+      "provenance": "Synthetic fictional workplace task authored for pilot calibration on 2026-10-29; no real organization or measured outcome.",
+      "anchors": [],
+      "references": [
+        "references/messages.md"
+      ],
+      "reader_questions": [
+        "Has a credit already been approved, and what must happen before one can be issued?",
+        "What should the customer send, and what should they not send?",
+        "What is promised by Tuesday at 15:00 UTC?"
+      ]
+    },
+    {
+      "id": "en-queue-proposal",
+      "language": "en",
+      "task": "drafting-technical",
+      "split": "development",
+      "provenance": "Synthetic fictional workplace task authored for pilot calibration on 2026-10-29; no real organization or measured outcome.",
+      "anchors": [
+        "ADR-024",
+        "event_id"
+      ],
+      "references": [
+        "references/technical.md",
+        "references/english.md"
+      ],
+      "reader_questions": [
+        "What delivery guarantee do these options provide, and what does event_id do?",
+        "Which option is recommended first, and when should the other be reconsidered?",
+        "What must be in place before a production trial, and who owns rollback?"
+      ]
+    },
+    {
+      "id": "en-good-email",
+      "language": "en",
+      "task": "editing-business",
+      "split": "development",
+      "provenance": "Synthetic fictional workplace task authored for pilot calibration on 2026-10-29; no real organization or measured outcome.",
+      "anchors": [],
+      "references": [
+        "references/messages.md"
+      ],
+      "reader_questions": [
+        "What should Sam do if Thursday is not possible?",
+        "How are travel costs handled?",
+        "Has a replacement installation date been confirmed?"
+      ]
+    },
+    {
+      "id": "en-support-decision",
+      "language": "en",
+      "task": "editing-business",
+      "split": "development",
+      "provenance": "Synthetic fictional workplace task authored for pilot calibration on 2026-10-29; no real organization or measured outcome.",
+      "anchors": [
+        "Northstar"
+      ],
+      "references": [
+        "references/messages.md"
+      ],
+      "reader_questions": [
+        "What does the proposed two-hour target measure, and does it change the contract?",
+        "What must happen before the supplier may receive customer data?",
+        "If the internal rota is not agreed, what happens next?",
+        "What does the 3,000 EUR refer to, and is that spending approved?"
+      ]
+    },
+    {
+      "id": "en-cache-explanation",
+      "language": "en",
+      "task": "drafting-technical",
+      "split": "development",
+      "provenance": "Synthetic fictional workplace task authored for pilot calibration on 2026-10-29; no real organization or measured outcome.",
+      "anchors": [],
+      "references": [
+        "references/technical.md",
+        "references/english.md"
+      ],
+      "reader_questions": [
+        "Why might the dashboard still show an old value after an accepted update?",
+        "What would repeatedly saving do to refresh speed and the audit record?",
+        "When should they escalate, and what information is needed?"
+      ]
+    },
+    {
+      "id": "de-pr-kommentar",
+      "language": "de",
+      "task": "editing-technical",
+      "split": "development",
+      "provenance": "Synthetic fictional workplace task authored for pilot calibration on 2026-10-29; no real organization or measured outcome.",
+      "anchors": [
+        "validatePayload",
+        "verifySignature",
+        "HTTP 429",
+        "retry_after_ms"
+      ],
+      "references": [
+        "references/pull-requests.md",
+        "references/german.md"
+      ],
+      "reader_questions": [
+        "Welche Prüfung fehlt noch?",
+        "Wann darf der Worker nach HTTP 429 erneut senden?",
+        "Was ist zur Ursache und zur Produktionsfreigabe bekannt?"
+      ]
+    },
+    {
+      "id": "de-kundenangebot",
+      "language": "de",
+      "task": "drafting-business",
+      "split": "development",
+      "provenance": "Synthetic fictional workplace task authored for pilot calibration on 2026-10-29; no real organization or measured outcome.",
+      "anchors": [],
+      "references": [
+        "references/messages.md",
+        "references/german.md"
+      ],
+      "reader_questions": [
+        "Unter welcher Voraussetzung ist der Versand am Montag geplant?",
+        "Ist der Preis bereits freigegeben?",
+        "Was gilt, wenn die Angaben bis Freitag nicht vollständig sind?"
+      ]
+    },
+    {
+      "id": "de-backfill-anleitung",
+      "language": "de",
+      "task": "drafting-technical",
+      "split": "development",
+      "provenance": "Synthetic fictional workplace task authored for pilot calibration on 2026-10-29; no real organization or measured outcome.",
+      "anchors": [
+        "Aurora",
+        "checkpoint.json",
+        "JOB_BATCH_SIZE=200",
+        "--resume-from"
+      ],
+      "references": [
+        "references/technical.md",
+        "references/german.md"
+      ],
+      "reader_questions": [
+        "Beweist ein erfolgreicher Prozess-Exit den fachlichen Abschluss?",
+        "Wann ist der Lauf wegen einer ausbleibenden Schreibbestätigung abzubrechen?",
+        "Was ist vor einer Wiederaufnahme zu prüfen?",
+        "Wann darf der Checkpoint gelöscht werden?"
+      ]
+    },
+    {
+      "id": "de-gute-email",
+      "language": "de",
+      "task": "editing-business",
+      "split": "development",
+      "provenance": "Synthetic fictional workplace task authored for pilot calibration on 2026-10-29; no real organization or measured outcome.",
+      "anchors": [],
+      "references": [
+        "references/messages.md",
+        "references/german.md"
+      ],
+      "reader_questions": [
+        "Was soll Frau Braun bei einem Änderungswunsch schicken?",
+        "Unter welchen Bedingungen sind zusätzliche Plätze möglich, und sind sie im aktuellen Preis enthalten?",
+        "Kann ein Ersatztermin sofort bestätigt werden?"
+      ]
+    },
+    {
+      "id": "de-angebot-lang",
+      "language": "de",
+      "task": "editing-business",
+      "split": "development",
+      "provenance": "Synthetic fictional workplace task authored for pilot calibration on 2026-10-29; no real organization or measured outcome.",
+      "anchors": [
+        "Lindenwerk",
+        "SAML"
+      ],
+      "references": [
+        "references/messages.md",
+        "references/german.md"
+      ],
+      "reader_questions": [
+        "Ist die Umsetzung durch eine Variantenentscheidung bereits beauftragt?",
+        "Was decken die monatlichen 600 EUR ab und was nicht?",
+        "Ist Anfang Dezember bereits reserviert?",
+        "Dürfen bereits echte Kundendaten übertragen werden?"
+      ]
+    },
+    {
+      "id": "de-backup-erklaerung",
+      "language": "de",
+      "task": "drafting-technical",
+      "split": "development",
+      "provenance": "Synthetic fictional workplace task authored for pilot calibration on 2026-10-29; no real organization or measured outcome.",
+      "anchors": [],
+      "references": [
+        "references/technical.md",
+        "references/german.md"
+      ],
+      "reader_questions": [
+        "Welche Grenze hat die Replikation bei einer versehentlichen Löschung?",
+        "Welche Änderungen könnten bei einer Wiederherstellung des genannten Backups fehlen?",
+        "Was soll die Ansprechpartnerin vor einer Wiederherstellung tun?"
+      ]
+    }
+  ]
+}

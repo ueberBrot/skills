@@ -1,0 +1,300 @@
+{
+  "purpose": "Private automated-scoring keys; never provide to generators or output-only answerability sessions.",
+  "scoring": {
+    "correct": "Accurately answers every part explicitly asked, without a contradictory or unsupported claim. Accept concise and equivalent wording. Extra context in the reference answer is optional unless the question asks for it.",
+    "partial": "Answers some explicitly asked parts accurately but omits another, without contradiction.",
+    "incorrect": "Contradicts a required proposition or adds an unsupported answer.",
+    "unanswerable": "The answering model explicitly cannot determine the answer from the output.",
+    "missing": "No answer recorded."
+  },
+  "cases": {
+    "en-release-update": {
+      "questions": [
+        {
+          "question": "Has the suspected cause of the HTTP 429 responses been confirmed?",
+          "reference_answer": "No. The retry loop is a possible cause only."
+        },
+        {
+          "question": "What must happen before the initial rollout, and how broad may it be?",
+          "reference_answer": "Priya must check the abort path and it must pass; Ops may then enable one tenant, with the rate limit retained."
+        },
+        {
+          "question": "What is still needed before the wider rollout, and is its date known?",
+          "reference_answer": "Both production metrics and Priya's result are needed; no wider-rollout date is known."
+        }
+      ],
+      "fidelity_requirements": [
+        "Retain the two-hour successful staging observation and state production metrics are still unchecked.",
+        "Keep the two-customer HTTP 429 report on the previous release and the unconfirmed retry-loop hypothesis.",
+        "Keep Priya's abort-path check as a prerequisite for shipping; allow only a one-tenant initial rollout after that check.",
+        "Retain the initial rate limit and require both production metrics and Priya's result before a wider rollout; do not invent a date."
+      ]
+    },
+    "en-customer-credit": {
+      "questions": [
+        {
+          "question": "Has a credit already been approved, and what must happen before one can be issued?",
+          "reference_answer": "No. Finance must first confirm a duplicate before a credit can be issued."
+        },
+        {
+          "question": "What should the customer send, and what should they not send?",
+          "reference_answer": "The invoice number; no full payment-card details."
+        },
+        {
+          "question": "What is promised by Tuesday at 15:00 UTC?",
+          "reference_answer": "A progress update, even if the investigation is not complete; not a guaranteed resolution."
+        }
+      ],
+      "fidelity_requirements": [
+        "Acknowledge the duplicate billing report without claiming the cause has been established.",
+        "Say the service remains available and no further payment is requested while the duplicate charge is investigated.",
+        "Keep the credit conditional on Finance confirming a duplicate; explain that no credit is approved yet.",
+        "Request the invoice number only, excluding full card details; promise an update by the stated time, not resolution by then."
+      ]
+    },
+    "en-queue-proposal": {
+      "questions": [
+        {
+          "question": "What delivery guarantee do these options provide, and what does event_id do?",
+          "reference_answer": "Neither option guarantees exactly-once delivery. Duplicate delivery remains possible; retaining event_id lets the consumer suppress duplicate external notifications."
+        },
+        {
+          "question": "Which option is recommended first, and when should the other be reconsidered?",
+          "reference_answer": "Investigate A first; reconsider B if representative measurements show the largest tenant still misses the target."
+        },
+        {
+          "question": "What must be in place before a production trial, and who owns rollback?",
+          "reference_answer": "Correctness/time checks, monitoring, one opted-in tenant and a specified rollback owner are required. That owner is not yet assigned."
+        }
+      ],
+      "fidelity_requirements": [
+        "Keep observations scoped to the test environment; do not link the separate production ticket or assert lost messages.",
+        "Preserve per-tenant ordering, lack of cross-tenant ordering requirement, event_id idempotency, possible duplicate delivery, and unchanged billing behavior.",
+        "Distinguish Option A's three working days and 120 EUR/month from Option B's two staff-weeks and 480 EUR/month; all are estimates without approval or reserved capacity.",
+        "Retain A's largest-tenant limitation, B's synthetic-only trial and pending retention pricing/security review, and the conditional recommendation to investigate A first.",
+        "Keep the proposed test target separate from an approved SLO, test correctness as well as speed, and require a one-tenant trial with explicit review before expansion.",
+        "Keep rollback triggers, event retention, missing rollback owner, monitoring requirement, and the open Product/Engineering/Finance decisions."
+      ]
+    },
+    "en-good-email": {
+      "questions": [
+        {
+          "question": "What should Sam do if Thursday is not possible?",
+          "reference_answer": "Tell Robin by Wednesday so Robin can check the next slot."
+        },
+        {
+          "question": "How are travel costs handled?",
+          "reference_answer": "Travel costs are separate from the quote and require approval before booking."
+        },
+        {
+          "question": "Has a replacement installation date been confirmed?",
+          "reference_answer": "No."
+        }
+      ],
+      "fidelity_requirements": [
+        "Retain Thursday for the signed form and Wednesday for warning of a delay.",
+        "Keep the installation slot conditional and the replacement date unconfirmed.",
+        "Preserve training for two administrators and separate travel costs requiring approval before booking.",
+        "Retain first-name address and the original sender without invented warmth or experience."
+      ]
+    },
+    "en-support-decision": {
+      "questions": [
+        {
+          "question": "What does the proposed two-hour target measure, and does it change the contract?",
+          "reference_answer": "It is a proposed first-response target of two staffed hours for 80% of eligible tickets. It does not promise resolution or change the contract."
+        },
+        {
+          "question": "What must happen before the supplier may receive customer data?",
+          "reference_answer": "Legal must approve the data-processing agreement and access design. No data transfer is authorized yet."
+        },
+        {
+          "question": "If the internal rota is not agreed, what happens next?",
+          "reference_answer": "Leaders must revisit the decision. Option B does not start automatically."
+        },
+        {
+          "question": "What does the 3,000 EUR refer to, and is that spending approved?",
+          "reference_answer": "It is a ceiling for internal-trial setup and coordination. Spending is not approved. It is not a confirmed six-week supplier price."
+        }
+      ],
+      "fidelity_requirements": [
+        "Preserve the current and proposed windows, weekday/holiday/weekend limits, one-business-day first-response contract and absence of resolution guarantee.",
+        "Keep ticket counts, sample limits and self-reported impact distinct from measured revenue or retention.",
+        "Keep Option A conditional on rota agreement with unchanged total staffed hours and the coaching trade-off.",
+        "Keep Option B's one-off and recurring prices, VAT exclusion, ticket limit, expiry, scope exclusions, information-gathering role and pending legal/data access approval.",
+        "Keep conditional recommendation for A, no automatic B fallback, unchanged contracts, and no claim of retention improvement.",
+        "Preserve the proposed 80% first-response target, daytime safeguard, incident route, staff constraint safeguard, missing cover owner and absent new on-call obligations.",
+        "Keep the unapproved 3,000 EUR ceiling separate from supplier pricing; do not calculate a six-week supplier total. Preserve named versus missing owners and the unscheduled trial pending both rota and spending approvals."
+      ]
+    },
+    "en-cache-explanation": {
+      "questions": [
+        {
+          "question": "Why might the dashboard still show an old value after an accepted update?",
+          "reference_answer": "The dashboard reads a periodically refreshed copy, or cache. After an accepted settings update, that copy can show the old value for up to five minutes."
+        },
+        {
+          "question": "What would repeatedly saving do to refresh speed and the audit record?",
+          "reference_answer": "It does not speed the refresh and can add duplicate audit entries."
+        },
+        {
+          "question": "When should they escalate, and what information is needed?",
+          "reference_answer": "After five minutes if still stale; supply the workspace ID and update timestamp, not credentials."
+        }
+      ],
+      "fidelity_requirements": [
+        "Distinguish an accepted settings update from its appearance in the cached dashboard.",
+        "Explain the copy/update delay using the supplied facts, retaining up to five minutes rather than promising exactly five minutes.",
+        "Say retrying the save does not speed refresh and could create duplicate audit entries, not duplicate charges.",
+        "Escalate only if the dashboard is still stale after five minutes; ask for workspace ID and timestamp, without requesting credentials or inventing a cause."
+      ]
+    },
+    "de-pr-kommentar": {
+      "questions": [
+        {
+          "question": "Welche Prüfung fehlt noch?",
+          "reference_answer": "Der Fall nach einem Verbindungsabbruch ist noch nicht geprüft."
+        },
+        {
+          "question": "Wann darf der Worker nach HTTP 429 erneut senden?",
+          "reference_answer": "Erst nach retry_after_ms und nur wenn der Auftrag nicht inzwischen storniert wurde."
+        },
+        {
+          "question": "Was ist zur Ursache und zur Produktionsfreigabe bekannt?",
+          "reference_answer": "Der Retry ist nur eine vermutete Ursache; sie ist nicht bestätigt. Eine Produktionsfreigabe liegt noch nicht vor."
+        }
+      ],
+      "fidelity_requirements": [
+        "Staging-Prüfung und fehlenden Test nach Verbindungsabbruch unterscheiden; keine abgeschlossene Prüfung behaupten.",
+        "validatePayload und verifySignature als getrennte Prüfungen von Struktur und Signatur erhalten.",
+        "Erst nach retry_after_ms erneut senden und nur sofern nicht storniert; diese Bedingungen nicht abschwächen.",
+        "Retry-Ursache als Vermutung erhalten, fehlenden Test vor Anfrage bei Ops verlangen und keine Produktionsfreigabe behaupten.",
+        "Internes ihr (2. Person Plural) und übliche Teambegriffe beibehalten."
+      ]
+    },
+    "de-kundenangebot": {
+      "questions": [
+        {
+          "question": "Unter welcher Voraussetzung ist der Versand am Montag geplant?",
+          "reference_answer": "Die Angaben müssen bis Freitag 12 Uhr vollständig vorliegen; Montag bleibt voraussichtlich."
+        },
+        {
+          "question": "Ist der Preis bereits freigegeben?",
+          "reference_answer": "Nein. Eine Preisfreigabe fehlt; die Kalkulation ist unverbindlich."
+        },
+        {
+          "question": "Was gilt, wenn die Angaben bis Freitag nicht vollständig sind?",
+          "reference_answer": "Ein Versandtermin ist dann nicht bestätigt; ein neuer Termin muss geprüft werden."
+        }
+      ],
+      "fidelity_requirements": [
+        "Sie und wir beibehalten; fehlende Daten konkret anfordern, keine vertraulichen Zugangsdaten verlangen.",
+        "Montag als voraussichtlichen Versandtermin nur bei vollständigen Angaben bis Freitag 12 Uhr erhalten.",
+        "Ohne vollständige Angaben ist kein Versandtermin bestätigt; keine automatische Verschiebung um feste Tage erfinden.",
+        "Preisfreigabe steht aus; unverbindliche Kalkulation nicht als verbindliches Angebot oder Preiszusage darstellen."
+      ]
+    },
+    "de-backfill-anleitung": {
+      "questions": [
+        {
+          "question": "Beweist ein erfolgreicher Prozess-Exit den fachlichen Abschluss?",
+          "reference_answer": "Nein. Es müssen null fehlende Einträge und die drei festgelegten Such-Stichproben geprüft werden."
+        },
+        {
+          "question": "Wann ist der Lauf wegen einer ausbleibenden Schreibbestätigung abzubrechen?",
+          "reference_answer": "Wenn die letzte erfolgreiche Schreibbestätigung länger als zehn Minuten zurückliegt, über den vorgesehenen Abbruchweg beenden und Ops informieren."
+        },
+        {
+          "question": "Was ist vor einer Wiederaufnahme zu prüfen?",
+          "reference_answer": "Der Prozess muss beendet sein; der neueste vollständig geschriebene Checkpoint muss zum Workspace passen."
+        },
+        {
+          "question": "Wann darf der Checkpoint gelöscht werden?",
+          "reference_answer": "Ein erfolgreicher Exit allein erlaubt das nicht; Frist und Zuständigkeit sind noch offen."
+        }
+      ],
+      "fidelity_requirements": [
+        "Zweck des Backfills, unveränderte Quelldaten und Unterschied zwischen Prozessende und fachlichem Abschluss erhalten.",
+        "Freigabe, bestätigten Workspace und Checkpoint-Zuordnung voraussetzen; keinen Termin, Start- oder Abbruchbefehl erfinden.",
+        "Nur einen Backfill pro Workspace und JOB_BATCH_SIZE=200 vorsehen, ohne normalen Nutzerzugriff zu sperren.",
+        "Prüfung alle fünf Minuten und Abbruch/Rückfrage bei Schreibbestätigung älter als zehn Minuten erhalten; aus unveränderter Zählung keinen Parallelstart ableiten.",
+        "Nach Abbruch erst Prozessende, dann vollständigen passenden Checkpoint prüfen; --resume-from nur mit geprüftem Checkpoint, andernfalls Ops-Entscheidung.",
+        "Idempotenz über erhaltene Quell-ID von garantierter Einmalverarbeitung unterscheiden.",
+        "Null fehlende Einträge und drei vorab festgelegte Beispiel-IDs als Abschlussprüfungen erhalten; Ergebnisdokumentation und offene Bereinigung festhalten."
+      ]
+    },
+    "de-gute-email": {
+      "questions": [
+        {
+          "question": "Was soll Frau Braun bei einem Änderungswunsch schicken?",
+          "reference_answer": "Zwei Terminvorschläge."
+        },
+        {
+          "question": "Unter welchen Bedingungen sind zusätzliche Plätze möglich, und sind sie im aktuellen Preis enthalten?",
+          "reference_answer": "Zusätzliche Plätze müssen vorher vereinbart werden. Sie sind im aktuellen Preis nicht enthalten."
+        },
+        {
+          "question": "Kann ein Ersatztermin sofort bestätigt werden?",
+          "reference_answer": "Nein. Erst nach Rücksprache mit dem Schulungsteam."
+        }
+      ],
+      "fidelity_requirements": [
+        "Sie-Register, Absenderin und Bitte um Bestätigung bis Mittwoch erhalten.",
+        "Termin am 18. November und zwei Vorschläge bei Terminänderung erhalten; Ersatztermin erst nach Rücksprache bestätigen.",
+        "Vier Teilnehmende sowie zusätzliche Plätze nur nach vorheriger Vereinbarung und außerhalb des aktuellen Preises erhalten."
+      ]
+    },
+    "de-angebot-lang": {
+      "questions": [
+        {
+          "question": "Ist die Umsetzung durch eine Variantenentscheidung bereits beauftragt?",
+          "reference_answer": "Nein. Ein verbindliches Angebot muss gesondert beiderseits bestätigt werden."
+        },
+        {
+          "question": "Was decken die monatlichen 600 EUR ab und was nicht?",
+          "reference_answer": "Den technischen Portalbetrieb, nicht die fachliche Bearbeitung von Kundenanfragen; Umsatzsteuer kommt hinzu."
+        },
+        {
+          "question": "Ist Anfang Dezember bereits reserviert?",
+          "reference_answer": "Nein. Es ist eine bedingte, voraussichtliche Planung mit weiteren Prüfungen."
+        },
+        {
+          "question": "Dürfen bereits echte Kundendaten übertragen werden?",
+          "reference_answer": "Nein. Datenschutz- und Berechtigungsprüfung/Freigabe sind noch erforderlich."
+        }
+      ],
+      "fidelity_requirements": [
+        "Entwurf und unverbindliche Kostenrahmen von verbindlichem Angebot und Beauftragung unterscheiden; Preisfreigabe steht aus.",
+        "Datenbasis von nur einem Standort, offene Feldbedeutungen und fehlende Nachweise für Gesamtdatenqualität/Fehlerquoten erhalten.",
+        "Variante A: ein Standort, nur Anzeige/Rückfragen, keine Auftragsänderung, vier Admin-Schulungsplätze, 12.000 EUR einmalig plus USt ohne Reise/Vor-Ort; Variante B: vier Standorte, 26.000 EUR plus USt, offene Ansprechpartner und Kapazität.",
+        "600 EUR monatlicher technischer Betrieb von fachlicher Anfragebearbeitung und einmaligen Kosten trennen; Laufzeit/Kündigung noch offen, bestehende Servicezeiten unverändert.",
+        "Anfang Dezember nur voraussichtlich bei vollständigen Voraussetzungen bis 6. November plus Daten-/Kapazitätsprüfung; nicht reserviert, keine automatische feste Verschiebung.",
+        "Bereinigte Daten ohne Zugangsdaten verlangen; SAML beibehalten, Rollenübernahme offen, keine Freigabe für echte Kundendaten, keine pauschalen Adminrechte.",
+        "Erreichbarkeit von fachlicher Abnahme unterscheiden, fehlende Abnahmeperson nennen und weder neue Leistungen noch Fristen/Preise für Nacharbeiten erfinden.",
+        "Empfehlung für A bedingt lassen; B nicht pauschal abwerten; Umsetzung erst nach Bestätigung eines verbindlichen Angebots."
+      ]
+    },
+    "de-backup-erklaerung": {
+      "questions": [
+        {
+          "question": "Welche Grenze hat die Replikation bei einer versehentlichen Löschung?",
+          "reference_answer": "Die Replikation übernimmt auch versehentliche Löschungen in die zweite aktuelle Kopie und schützt daher allein nicht vor dieser Löschung."
+        },
+        {
+          "question": "Welche Änderungen könnten bei einer Wiederherstellung des genannten Backups fehlen?",
+          "reference_answer": "Änderungen nach gestern 22 Uhr können fehlen."
+        },
+        {
+          "question": "Was soll die Ansprechpartnerin vor einer Wiederherstellung tun?",
+          "reference_answer": "Support die betroffenen Datensätze und den Zeitpunkt nennen; zunächst prüfen lassen, nicht sofort wiederherstellen."
+        }
+      ],
+      "fidelity_requirements": [
+        "Replikation als aktuelle zweite Kopie von zeitbezogenem Backup unterscheiden.",
+        "Übernahme versehentlicher Löschung durch Replikation erklären, ohne zu behaupten, die Daten dieses Falls seien sicher wiederherstellbar.",
+        "Letztes erfolgreich geprüftes Backup von gestern 22 Uhr nennen und möglichen Verlust späterer Änderungen bei Wiederherstellung erhalten.",
+        "Vor Wiederherstellung betroffene Datensätze und Zeitpunkt an Support geben; keine sofortige Wiederherstellung oder neue Befehle empfehlen."
+      ]
+    }
+  }
+}

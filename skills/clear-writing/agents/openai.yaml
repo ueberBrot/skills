@@ -1,0 +1,7 @@
+---
+interface:
+  display_name: "Clear Writing"
+  short_description: "Clear, natural workplace prose that preserves meaning"
+  default_prompt: >-
+    Use $clear-writing to make this text clear, natural, and concise while
+    preserving its meaning.

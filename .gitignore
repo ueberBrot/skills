@@ -1,0 +1,10 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+node_modules/
+.vitest/
+*.tsbuildinfo
+.eval-runs/
+.eval-reviews/
+.fallow/
+evals/**/private/frozen-inputs.json

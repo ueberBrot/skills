@@ -1,0 +1,77 @@
+{
+  "$schema": "./node_modules/fallow/schema.json",
+  "entry": [
+    "src/cli.ts",
+    "src/writers/launcher.ts",
+    "benchmarks/replay.ts",
+    "evals/clear-writing/profile.ts"
+  ],
+  "ignoreDependencies": [
+    "eslint-plugin-github",
+    "eslint-plugin-sonarjs",
+    "eslint-plugin-tsdoc"
+  ],
+  "boundaries": {
+    "zones": [
+      {
+        "name": "shared",
+        "patterns": [
+          "src/domain.ts",
+          "src/errors.ts",
+          "src/paths.ts",
+          "src/internal/**"
+        ]
+      },
+      { "name": "skills", "patterns": ["src/skills/**"] },
+      { "name": "writers", "patterns": ["src/writers/**"] },
+      { "name": "evaluation", "patterns": ["src/evaluation/**"] },
+      { "name": "suites", "patterns": ["src/suites/**"] },
+      { "name": "runs", "patterns": ["src/runs/**"] },
+      { "name": "assessment", "patterns": ["src/assessment/**"] },
+      { "name": "benchmarks", "patterns": ["benchmarks/**"] },
+      { "name": "pilot", "patterns": ["evals/**/*.ts"] },
+      { "name": "cli", "patterns": ["src/cli.ts"] }
+    ],
+    "rules": [
+      { "from": "shared", "allow": ["shared"] },
+      { "from": "skills", "allow": ["skills", "shared"] },
+      { "from": "writers", "allow": ["writers", "shared"] },
+      { "from": "evaluation", "allow": ["evaluation", "shared"] },
+      {
+        "from": "suites",
+        "allow": ["suites", "shared", "skills", "evaluation"]
+      },
+      {
+        "from": "runs",
+        "allow": ["runs", "shared", "writers"],
+        "allowTypeOnly": ["suites"]
+      },
+      {
+        "from": "assessment",
+        "allow": ["assessment", "shared", "runs", "writers"]
+      },
+      { "from": "pilot", "allow": ["pilot"] },
+      {
+        "from": "benchmarks",
+        "allow": ["benchmarks", "shared", "runs"],
+        "allowTypeOnly": ["suites"]
+      },
+      {
+        "from": "cli",
+        "allow": [
+          "shared",
+          "skills",
+          "writers",
+          "evaluation",
+          "suites",
+          "runs",
+          "assessment"
+        ]
+      }
+    ],
+    "coverage": {
+      "requireAllFiles": true,
+      "allowUnmatched": ["tests/**", "vite.config.ts"]
+    }
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "experiment": "clear-writing-development-pilot-1",
+  "status": "Synthetic development calibration with automated model grading.",
+  "claim_scope": "Exploratory skill effect for one Codex/model/effort configuration; not representative workplace effectiveness or model-general evidence.",
+  "conditions": {
+    "no_skill": "Common task instructions and task data only.",
+    "short_prompt": "Self-contained compact adaptation of this skill, including EN/DE safeguards; not a generic plain-writing prompt.",
+    "full_skill": "Current repository skill and case-selected references, injected by the harness."
+  },
+  "run_profile": "profile.ts",
+  "repetitions": 1,
+  "case_axes": {
+    "en-release-update": {
+      "language": "en",
+      "domain": "technical",
+      "operation": "editing",
+      "length": "short",
+      "already_good": false
+    },
+    "en-customer-credit": {
+      "language": "en",
+      "domain": "business",
+      "operation": "drafting",
+      "length": "short",
+      "already_good": false
+    },
+    "en-queue-proposal": {
+      "language": "en",
+      "domain": "technical",
+      "operation": "drafting",
+      "length": "long",
+      "already_good": false
+    },
+    "en-good-email": {
+      "language": "en",
+      "domain": "business",
+      "operation": "editing",
+      "length": "short",
+      "already_good": true
+    },
+    "en-support-decision": {
+      "language": "en",
+      "domain": "business",
+      "operation": "editing",
+      "length": "long",
+      "already_good": false
+    },
+    "en-cache-explanation": {
+      "language": "en",
+      "domain": "technical",
+      "operation": "drafting",
+      "length": "short",
+      "already_good": false
+    },
+    "de-pr-kommentar": {
+      "language": "de",
+      "domain": "technical",
+      "operation": "editing",
+      "length": "short",
+      "already_good": false
+    },
+    "de-kundenangebot": {
+      "language": "de",
+      "domain": "business",
+      "operation": "drafting",
+      "length": "short",
+      "already_good": false
+    },
+    "de-backfill-anleitung": {
+      "language": "de",
+      "domain": "technical",
+      "operation": "drafting",
+      "length": "long",
+      "already_good": false
+    },
+    "de-gute-email": {
+      "language": "de",
+      "domain": "business",
+      "operation": "editing",
+      "length": "short",
+      "already_good": true
+    },
+    "de-angebot-lang": {
+      "language": "de",
+      "domain": "business",
+      "operation": "editing",
+      "length": "long",
+      "already_good": false
+    },
+    "de-backup-erklaerung": {
+      "language": "de",
+      "domain": "technical",
+      "operation": "drafting",
+      "length": "short",
+      "already_good": false
+    }
+  },
+  "generation_rules": [
+    "Same cases, requests, model, effort and controls in every condition.",
+    "Fresh isolated session per sample; execution order randomized with recorded seed.",
+    "Private checks and answer keys are not included in generation prompts.",
+    "Freeze suite, compact text, candidate skill, selected references, profile and answer keys before generation; record hashes.",
+    "Ordinary task requirements and source facts are common to all conditions; editorial coaching that repeated hidden rubric safeguards was removed from rough notes before freezing."
+  ],
+  "model_grading": {
+    "model": "gpt-6.1-terra",
+    "reasoning": "medium",
+    "fidelity": "For every output, assess each supplied requirement against the source/notes. Record a pass or fail with concrete evidence for every criterion. Check unsupported claims beyond the criteria and flag weak or incomplete evaluation criteria.",
+    "preference": "Compare all three condition pairs under anonymous A/B labels in fresh sessions, once in each presentation order. Allow ties. Assess clarity, idiomatic language, audience/register fit, remaining editing burden and concrete defects. Keep semantic fidelity separate. Disagreement between presentation orders is inconclusive.",
+    "answerability": "Each fresh answering session receives one output and its questions only, excluding source, other variants, keys, run artifacts and decoding.",
+    "answer_scoring": "Separate scoring sessions compare recorded answers with private answer keys and record correct/partial/incorrect/unanswerable with reasons. Recorded answers alone are not correctness scores.",
+    "provenance": "Record grading prompts, raw responses, requested and reported model/settings, schema validation failures and run/input hashes separately from the generation artifact.",
+    "use": "Model grading is advisory evidence for skill development; it does not impose a CI threshold. Deterministic repository and execution checks retain their own failure status.",
+    "excluded_criteria": [
+      "AI-detector scores",
+      "Word or punctuation counts as universal quality proxies",
+      "Assuming the longest or shortest output is best"
+    ]
+  },
+  "acceptance_for_pilot": [
+    "Every expected sample is accounted for, including failures and unevaluated literal checks.",
+    "Anonymous pair labels, reversed presentation orders and separation of answer keys from answering sessions are checked.",
+    "Grading responses satisfy their schemas and provide evidence or reasons for their judgments; failed grading calls remain visible.",
+    "Fix procedural defects before expanding to sanitized real tasks and a frozen held-out set."
+  ],
+  "limits": [
+    "All cases are synthetic and visible to the author.",
+    "All cases are development; none is held out.",
+    "One generation per condition/case does not estimate sampling variance.",
+    "The full condition tests controlled injection, not automatic skill discovery.",
+    "Single-model findings do not establish transfer to other models.",
+    "Literal-anchor passes do not establish semantic fidelity or writing quality.",
+    "Model answerability measures information recoverable by the grading model, not readership outcomes.",
+    "The grading model is also the generation model; fresh contexts and anonymous labels do not eliminate shared model biases.",
+    "The compact candidate condenses the main skill plus selected branch safeguards; differences cannot be attributed to token length or reference-file layout alone."
+  ],
+  "reference_routing": {
+    "en-support-decision": "messages.md covers decision requests, stated timing and uncertainties for the business audience; technical.md was removed as an unnecessary procedure/code branch."
+  }
+}

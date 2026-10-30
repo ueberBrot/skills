@@ -1,0 +1,86 @@
+{
+  "en-release-update": [
+    "Retain the two-hour successful staging observation and state production metrics are still unchecked.",
+    "Keep the two-customer HTTP 429 report on the previous release and the unconfirmed retry-loop hypothesis.",
+    "Keep Priya's abort-path check as a prerequisite for shipping; allow only a one-tenant initial rollout after that check.",
+    "Retain the initial rate limit and require both production metrics and Priya's result before a wider rollout; do not invent a date."
+  ],
+  "en-customer-credit": [
+    "Acknowledge the duplicate billing report without claiming the cause has been established.",
+    "Say the service remains available and no further payment is requested while the duplicate charge is investigated.",
+    "Keep the credit conditional on Finance confirming a duplicate; explain that no credit is approved yet.",
+    "Request the invoice number only, excluding full card details; promise an update by the stated time, not resolution by then."
+  ],
+  "en-queue-proposal": [
+    "Keep observations scoped to the test environment; do not link the separate production ticket or assert lost messages.",
+    "Preserve per-tenant ordering, lack of cross-tenant ordering requirement, event_id idempotency, possible duplicate delivery, and unchanged billing behavior.",
+    "Distinguish Option A's three working days and 120 EUR/month from Option B's two staff-weeks and 480 EUR/month; all are estimates without approval or reserved capacity.",
+    "Retain A's largest-tenant limitation, B's synthetic-only trial and pending retention pricing/security review, and the conditional recommendation to investigate A first.",
+    "Keep the proposed test target separate from an approved SLO, test correctness as well as speed, and require a one-tenant trial with explicit review before expansion.",
+    "Keep rollback triggers, event retention, missing rollback owner, monitoring requirement, and the open Product/Engineering/Finance decisions."
+  ],
+  "en-good-email": [
+    "Retain Thursday for the signed form and Wednesday for warning of a delay.",
+    "Keep the installation slot conditional and the replacement date unconfirmed.",
+    "Preserve training for two administrators and separate travel costs requiring approval before booking.",
+    "Retain first-name address and the original sender without invented warmth or experience."
+  ],
+  "en-support-decision": [
+    "Preserve the current and proposed windows, weekday/holiday/weekend limits, one-business-day first-response contract and absence of resolution guarantee.",
+    "Keep ticket counts, sample limits and self-reported impact distinct from measured revenue or retention.",
+    "Keep Option A conditional on rota agreement with unchanged total staffed hours and the coaching trade-off.",
+    "Keep Option B's one-off and recurring prices, VAT exclusion, ticket limit, expiry, scope exclusions, information-gathering role and pending legal/data access approval.",
+    "Keep conditional recommendation for A, no automatic B fallback, unchanged contracts, and no claim of retention improvement.",
+    "Preserve the proposed 80% first-response target, daytime safeguard, incident route, staff constraint safeguard, missing cover owner and absent new on-call obligations.",
+    "Keep the unapproved 3,000 EUR ceiling separate from supplier pricing; do not calculate a six-week supplier total. Preserve named versus missing owners and the unscheduled trial pending both rota and spending approvals."
+  ],
+  "en-cache-explanation": [
+    "Distinguish an accepted settings update from its appearance in the cached dashboard.",
+    "Explain the copy/update delay using the supplied facts, retaining up to five minutes rather than promising exactly five minutes.",
+    "Say retrying the save does not speed refresh and could create duplicate audit entries, not duplicate charges.",
+    "Escalate only if the dashboard is still stale after five minutes; ask for workspace ID and timestamp, without requesting credentials or inventing a cause."
+  ],
+  "de-pr-kommentar": [
+    "Staging-Prüfung und fehlenden Test nach Verbindungsabbruch unterscheiden; keine abgeschlossene Prüfung behaupten.",
+    "validatePayload und verifySignature als getrennte Prüfungen von Struktur und Signatur erhalten.",
+    "Erst nach retry_after_ms erneut senden und nur sofern nicht storniert; diese Bedingungen nicht abschwächen.",
+    "Retry-Ursache als Vermutung erhalten, fehlenden Test vor Anfrage bei Ops verlangen und keine Produktionsfreigabe behaupten.",
+    "Internes ihr (2. Person Plural) und übliche Teambegriffe beibehalten."
+  ],
+  "de-kundenangebot": [
+    "Sie und wir beibehalten; fehlende Daten konkret anfordern, keine vertraulichen Zugangsdaten verlangen.",
+    "Montag als voraussichtlichen Versandtermin nur bei vollständigen Angaben bis Freitag 12 Uhr erhalten.",
+    "Ohne vollständige Angaben ist kein Versandtermin bestätigt; keine automatische Verschiebung um feste Tage erfinden.",
+    "Preisfreigabe steht aus; unverbindliche Kalkulation nicht als verbindliches Angebot oder Preiszusage darstellen."
+  ],
+  "de-backfill-anleitung": [
+    "Zweck des Backfills, unveränderte Quelldaten und Unterschied zwischen Prozessende und fachlichem Abschluss erhalten.",
+    "Freigabe, bestätigten Workspace und Checkpoint-Zuordnung voraussetzen; keinen Termin, Start- oder Abbruchbefehl erfinden.",
+    "Nur einen Backfill pro Workspace und JOB_BATCH_SIZE=200 vorsehen, ohne normalen Nutzerzugriff zu sperren.",
+    "Prüfung alle fünf Minuten und Abbruch/Rückfrage bei Schreibbestätigung älter als zehn Minuten erhalten; aus unveränderter Zählung keinen Parallelstart ableiten.",
+    "Nach Abbruch erst Prozessende, dann vollständigen passenden Checkpoint prüfen; --resume-from nur mit geprüftem Checkpoint, andernfalls Ops-Entscheidung.",
+    "Idempotenz über erhaltene Quell-ID von garantierter Einmalverarbeitung unterscheiden.",
+    "Null fehlende Einträge und drei vorab festgelegte Beispiel-IDs als Abschlussprüfungen erhalten; Ergebnisdokumentation und offene Bereinigung festhalten."
+  ],
+  "de-gute-email": [
+    "Sie-Register, Absenderin und Bitte um Bestätigung bis Mittwoch erhalten.",
+    "Termin am 18. November und zwei Vorschläge bei Terminänderung erhalten; Ersatztermin erst nach Rücksprache bestätigen.",
+    "Vier Teilnehmende sowie zusätzliche Plätze nur nach vorheriger Vereinbarung und außerhalb des aktuellen Preises erhalten."
+  ],
+  "de-angebot-lang": [
+    "Entwurf und unverbindliche Kostenrahmen von verbindlichem Angebot und Beauftragung unterscheiden; Preisfreigabe steht aus.",
+    "Datenbasis von nur einem Standort, offene Feldbedeutungen und fehlende Nachweise für Gesamtdatenqualität/Fehlerquoten erhalten.",
+    "Variante A: ein Standort, nur Anzeige/Rückfragen, keine Auftragsänderung, vier Admin-Schulungsplätze, 12.000 EUR einmalig plus USt ohne Reise/Vor-Ort; Variante B: vier Standorte, 26.000 EUR plus USt, offene Ansprechpartner und Kapazität.",
+    "600 EUR monatlicher technischer Betrieb von fachlicher Anfragebearbeitung und einmaligen Kosten trennen; Laufzeit/Kündigung noch offen, bestehende Servicezeiten unverändert.",
+    "Anfang Dezember nur voraussichtlich bei vollständigen Voraussetzungen bis 6. November plus Daten-/Kapazitätsprüfung; nicht reserviert, keine automatische feste Verschiebung.",
+    "Bereinigte Daten ohne Zugangsdaten verlangen; SAML beibehalten, Rollenübernahme offen, keine Freigabe für echte Kundendaten, keine pauschalen Adminrechte.",
+    "Erreichbarkeit von fachlicher Abnahme unterscheiden, fehlende Abnahmeperson nennen und weder neue Leistungen noch Fristen/Preise für Nacharbeiten erfinden.",
+    "Empfehlung für A bedingt lassen; B nicht pauschal abwerten; Umsetzung erst nach Bestätigung eines verbindlichen Angebots."
+  ],
+  "de-backup-erklaerung": [
+    "Replikation als aktuelle zweite Kopie von zeitbezogenem Backup unterscheiden.",
+    "Übernahme versehentlicher Löschung durch Replikation erklären, ohne zu behaupten, die Daten dieses Falls seien sicher wiederherstellbar.",
+    "Letztes erfolgreich geprüftes Backup von gestern 22 Uhr nennen und möglichen Verlust späterer Änderungen bei Wiederherstellung erhalten.",
+    "Vor Wiederherstellung betroffene Datensätze und Zeitpunkt an Support geben; keine sofortige Wiederherstellung oder neue Befehle empfehlen."
+  ]
+}

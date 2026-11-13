@@ -1,0 +1,23 @@
+{
+  "kind": "controlled-native-protocol-exercises",
+  "shared_project": "fixtures/project",
+  "target_score": 8,
+  "critics": "One fresh native critic per round; inherit model and settings.",
+  "first_attempt": "Review the unchanged starter before repairing it.",
+  "scenarios": [
+    {
+      "id": "cache-revision",
+      "fixture": "fixtures/cache",
+      "max_rounds": 3,
+      "repair_budget": "Repair source and tests after the first review.",
+      "expected": "Reject the starter, revise from findings, then pass a fresh review and the independent oracle."
+    },
+    {
+      "id": "interval-exhaustion",
+      "fixture": "fixtures/intervals",
+      "max_rounds": 2,
+      "repair_budget": "After the unchanged first attempt, repair at most one exported function body. Preserve signatures, existing tests and configuration. Add no shared helper or alias affecting the untouched function. Make the allowed repair even if another defect remains.",
+      "expected": "Stop after two rejected reviews with unresolved findings and no third critic."
+    }
+  ]
+}

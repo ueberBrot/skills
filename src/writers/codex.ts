@@ -1,5 +1,6 @@
-import { chat, REASONING_LEVELS } from "@tanstack/ai";
+import { REASONING_LEVELS } from "@tanstack/ai";
 import { codexText } from "@tanstack/ai-codex";
+import * as AI from "@tanstack/ai-effect";
 import { Duration, Effect, Schema } from "effect";
 
 import { WriterOutputSchema } from "../domain";
@@ -173,9 +174,8 @@ class CodexExecutor {
         ],
         scrubEnv: ["CODEX_API_KEY", "OPENAI_API_KEY", "OPENAI_BASE_URL"],
       },
-      ({ abortController, adapterEnvironment, middleware, runId, threadId }) =>
-        chat({
-          abortController,
+      ({ adapterEnvironment, middleware, runId, threadId }) =>
+        AI.chat({
           adapter: codexText(model, {
             authMode: "host",
             codexExecutable: launcher,
@@ -193,8 +193,8 @@ class CodexExecutor {
           }),
           debug: false,
           messages: [{ content: request.prompt, role: "user" }],
-          middleware,
           retry: { maxRetries: 0 },
+          middleware,
           runId,
           threadId,
         })

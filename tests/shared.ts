@@ -1,12 +1,15 @@
 import path from "node:path";
 
-import { BunServices } from "@effect/platform-bun";
 import { Effect } from "effect";
 
+import { platform } from "../src/internal/platform";
+
+import type { Services } from "../src/internal/platform";
+
 export const run = async <A, E>(
-  program: Effect.Effect<A, E, BunServices.BunServices>
+  program: Effect.Effect<A, E, Services>
 ): Promise<A> =>
-  await Effect.runPromise(program.pipe(Effect.provide(BunServices.layer)));
+  await Effect.runPromise(program.pipe(Effect.provide(platform)));
 
 export const writeAnchorHelper = async (directory: string): Promise<string> => {
   const file = path.join(directory, "anchor-helper.py");

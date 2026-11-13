@@ -160,18 +160,18 @@ const fixture = async () => {
 
   const withoutKeys: GradingOptions = {
     concurrency: 2,
-    model,
     out: path.join(directory, "assessment"),
     run: runPath,
     settings: { model_reasoning_effort: reasoning },
     timeout: 5,
+    model,
   };
 
   return {
+    options: { ...withoutKeys, answerKeys },
     artifact,
     directory,
     keys,
-    options: { ...withoutKeys, answerKeys },
     withoutKeys,
   };
 };

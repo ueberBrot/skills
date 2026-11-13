@@ -6,5 +6,6 @@ node_modules/
 *.tsbuildinfo
 .eval-runs/
 .eval-reviews/
+.critic-loop/
 .fallow/
 evals/**/private/frozen-inputs.json

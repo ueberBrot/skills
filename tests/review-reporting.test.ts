@@ -110,10 +110,10 @@ const packet = async (run = sampleRun(), seed = 8) => {
     decoding: Schema.decodeUnknownSync(DecodingSchema)(
       await runEffect(readJson(decodingPath))
     ),
-    decodingPath,
     judgments: Schema.decodeUnknownSync(JudgmentsSchema)(
       await runEffect(readJson(path.join(publicDir, "judgments.json")))
     ),
+    decodingPath,
     publicDir,
     root,
     run,
@@ -122,7 +122,7 @@ const packet = async (run = sampleRun(), seed = 8) => {
 };
 
 describe("anonymous assessment", () => {
-  test("canonical hashes ignore nested object key order and preserve array order", () => {
+  test("canonical hashes ignore nested object key order and preserve array order", async () => {
     const first = Schema.decodeSync(Schema.fromJsonString(Schema.Json))(
       '[{"z":2,"a":{"d":[null,false,3,"Grüße"],"c":1}}]'
     );
@@ -132,7 +132,9 @@ describe("anonymous assessment", () => {
     expect(canonicalJson(first)).toBe(
       '[{"a":{"c":1,"d":[null,false,3,"Grüße"]},"z":2}]'
     );
-    expect(sha256(canonicalJson(first))).toBe(sha256(canonicalJson(reordered)));
+    expect(await runEffect(sha256(canonicalJson(first)))).toBe(
+      await runEffect(sha256(canonicalJson(reordered)))
+    );
     expect(canonicalJson([1, 2])).not.toBe(canonicalJson([2, 1]));
   });
 

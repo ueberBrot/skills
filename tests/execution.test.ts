@@ -66,17 +66,22 @@ const expectRejected = async <T>(
   operation: Promise<T>,
   message?: string
 ): Promise<void> => {
-  const error = await operation.then(
-    () => {
-      throw new Error("Expected the operation to reject");
-    },
-    Schema.decodeUnknownSync(Schema.instanceOf(Error))
+  let rejected: unknown;
+
+  try {
+    await operation;
+  } catch (error) {
+    rejected = error;
+  }
+
+  const rejection = Schema.decodeUnknownSync(Schema.instanceOf(Error))(
+    rejected
   );
 
-  expect(error).toBeInstanceOf(Error);
+  expect(rejection).toBeInstanceOf(Error);
 
   if (message !== undefined) {
-    expect(error.message).toContain(message);
+    expect(rejection.message).toContain(message);
   }
 };
 
@@ -175,11 +180,11 @@ const fixtureSuite = async (): Promise<SuiteFiles> => {
 
   return {
     captures: nodePath.join(root, "captures"),
+    suite: await run(loadSuite(path)),
     fixtures,
     path,
     root,
     spec,
-    suite: await run(loadSuite(path)),
   };
 };
 
@@ -389,7 +394,12 @@ describe("writer prompts and generic execution", () => {
         .update(await Bun.file(defined(command[2])).bytes())
         .digest("hex")
     );
-    expect(artifact.manifest.package_versions["@tanstack/ai"]).toBe("1.0.0");
+    expect(artifact.manifest.package_versions["@tanstack/ai"]).toBe(
+      packageInfo.dependencies["@tanstack/ai"]
+    );
+    expect(artifact.manifest.package_versions["@tanstack/ai-effect"]).toBe(
+      packageInfo.dependencies["@tanstack/ai-effect"]
+    );
     expect(artifact.manifest.package_versions[packageInfo.name]).toBe(
       packageInfo.version
     );

@@ -44,7 +44,7 @@ test("structured classification flows through replay, blinded review, and unasse
       Bun.write(
         path.join(root, "fixtures.json"),
         JSON.stringify([
-          { id: "tickets", input, request: "Classify these tickets." },
+          { id: "tickets", request: "Classify these tickets.", input },
         ])
       ),
       Bun.write(

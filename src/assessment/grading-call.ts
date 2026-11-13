@@ -68,14 +68,7 @@ const GradingCallSchema = Schema.Struct(callFields).check(identityCheck);
 const CachedCallSchema = Schema.Struct({
   ...callFields,
   prompt: Schema.String,
-}).check(
-  identityCheck,
-  Schema.makeFilter(
-    (call) =>
-      call.prompt_hash === sha256(call.prompt) ||
-      "Stored grading prompt differs from its hash"
-  )
-);
+}).check(identityCheck);
 
 type CachedCall = typeof CachedCallSchema.Type;
 
@@ -108,6 +101,12 @@ const loadCache = Effect.fn("loadGradingCache")(function* loadGradingCache(
       yield* readJson(path.join(directory, file)),
       { onExcessProperty: "error" }
     );
+
+    if (call.prompt_hash !== (yield* sha256(call.prompt))) {
+      return yield* new HarnessError({
+        message: "Stored grading prompt differs from its hash",
+      });
+    }
 
     if (Number(file.slice(0, -5)) !== call.id || ids.has(call.id)) {
       return yield* new HarnessError({
@@ -179,7 +178,7 @@ const reuseCall = Effect.fn("reuseGradingCall")(function* reuseGradingCall<A>(
   prompt: string,
   decode: (text: string) => Effect.Effect<A, HarnessError>
 ) {
-  const previous = state.cache.get(callKey(identity, sha256(prompt)));
+  const previous = state.cache.get(callKey(identity, yield* sha256(prompt)));
 
   if (previous === undefined || previous.response === null) {
     return null;
@@ -234,8 +233,8 @@ const executeCall = <A>(
             state.writer.execute(
               {
                 model: state.options.model,
-                prompt,
                 settings: state.options.settings,
+                prompt,
               },
               state.options.timeout
             )
@@ -258,7 +257,7 @@ const executeCall = <A>(
             Number((yield* Clock.currentTimeNanos) - started) / 1e9,
           error: Exit.isFailure(outcome) ? Cause.pretty(outcome.cause) : null,
           id,
-          prompt_hash: sha256(prompt),
+          prompt_hash: yield* sha256(prompt),
           response,
           status: Exit.isSuccess(outcome) ? "success" : "error",
         };
@@ -304,11 +303,11 @@ export const makeGrader = Effect.fn("makeGrader")(function* makeGrader(
   const state: GraderState = {
     cache: stored.cache,
     calls: [],
-    options,
-    path,
     sequence: stored.sequence,
     used: new Set(),
     writer: yield* Writer,
+    options,
+    path,
   };
 
   const execute = <A>(

@@ -1,6 +1,6 @@
 import { expect, it } from "@effect/vitest";
 import { EventType } from "@tanstack/ai/client";
-import { Effect, Fiber } from "effect";
+import { Deferred, Effect, Fiber, Stream } from "effect";
 
 import { consumeCompletion } from "../src/writers/completion";
 
@@ -27,46 +27,29 @@ const finished: RunFinishedEvent = {
 };
 
 const trackedStream = (chunks: readonly StreamChunk[]) => {
-  let index = 0;
   let closed = false;
-
-  const iterator: AsyncIterator<StreamChunk> = {
-    next: async () => {
-      const chunk = chunks[index];
-      index += 1;
-
-      return await Promise.resolve(
-        chunk === undefined
-          ? { done: true, value: null }
-          : { done: false, value: chunk }
-      );
-    },
-    return: async () => {
-      closed = true;
-
-      return await Promise.resolve({ done: true, value: null });
-    },
-  };
 
   return {
     closed: () => closed,
-    stream: { [Symbol.asyncIterator]: () => iterator },
+    stream: Stream.unwrap(
+      Effect.acquireRelease(Effect.succeed(Stream.fromIterable(chunks)), () =>
+        Effect.sync(() => {
+          closed = true;
+        })
+      )
+    ),
   };
 };
 
-it.effect(
-  "completed agent streams release their iterator and abort controller",
-  () =>
-    Effect.gen(function* completedStream() {
-      const controller = new AbortController();
-      const tracked = trackedStream([...assistantMessage, finished]);
+it.effect("completed agent streams release their resources", () =>
+  Effect.gen(function* completedStream() {
+    const tracked = trackedStream([...assistantMessage, finished]);
 
-      const completion = yield* consumeCompletion(tracked.stream, controller);
+    const completion = yield* consumeCompletion(tracked.stream);
 
-      expect(completion.output).toBe("Completed response");
-      expect(tracked.closed()).toBe(true);
-      expect(controller.signal.aborted).toBe(true);
-    })
+    expect(completion.output).toBe("Completed response");
+    expect(tracked.closed()).toBe(true);
+  })
 );
 
 it.effect.each([
@@ -91,6 +74,16 @@ it.effect.each([
   { chunks: assistantMessage, name: "missing terminal event" },
   {
     chunks: [
+      ...assistantMessage,
+      {
+        type: EventType.RUN_ERROR,
+        message: "Provider failed",
+      },
+    ],
+    name: "provider error event",
+  },
+  {
+    chunks: [
       ...assistantMessage.filter(
         (chunk) => chunk.type !== EventType.TEXT_MESSAGE_CONTENT
       ),
@@ -106,59 +99,46 @@ it.effect.each([
   "rejects $name and releases the stream",
   ({ chunks }) =>
     Effect.gen(function* rejectedStream() {
-      const controller = new AbortController();
       const tracked = trackedStream(chunks);
 
-      const error = yield* Effect.flip(
-        consumeCompletion(tracked.stream, controller)
-      );
+      const error = yield* Effect.flip(consumeCompletion(tracked.stream));
 
       expect(error).toBeInstanceOf(Error);
 
       expect(tracked.closed()).toBe(true);
-      expect(controller.signal.aborted).toBe(true);
     })
 );
 
-it.effect("interruption aborts a pending read and closes the iterator", () =>
+it.effect("interruption releases a pending stream", () =>
   Effect.gen(function* interruptedStream() {
-    const controller = new AbortController();
-    const reading = Promise.withResolvers<undefined>();
+    const reading = yield* Deferred.make<undefined>();
     let closed = false;
 
-    const iterator: AsyncIterator<StreamChunk> = {
-      next: async () => {
-        const pending = Promise.withResolvers<IteratorResult<StreamChunk>>();
-
-        controller.signal.addEventListener(
-          "abort",
-          () => {
-            pending.resolve({ done: true, value: null });
-          },
-          { once: true }
-        );
-
-        reading.resolve(undefined);
-
-        return await pending.promise;
-      },
-      return: async () => {
-        closed = true;
-
-        return await Promise.resolve({ done: true, value: null });
-      },
-    };
-
-    const fiber = yield* Effect.forkChild(
-      consumeCompletion({ [Symbol.asyncIterator]: () => iterator }, controller)
+    const stream = Stream.unwrap(
+      Effect.acquireRelease(
+        Effect.succeed(
+          Stream.fromEffect(Deferred.succeed(reading, undefined)).pipe(
+            Stream.flatMap(() => Stream.never)
+          )
+        ),
+        () =>
+          Effect.sync(() => {
+            closed = true;
+          })
+      )
     );
 
-    yield* Effect.promise(async () => {
-      await reading.promise;
-    });
+    const fiber = yield* Effect.forkChild(consumeCompletion(stream));
+    yield* Deferred.await(reading);
     yield* Fiber.interrupt(fiber);
-
-    expect(controller.signal.aborted).toBe(true);
     expect(closed).toBe(true);
+  })
+);
+
+it.effect("preserves native stream failures", () =>
+  Effect.gen(function* failedStream() {
+    const failure = new Error("provider failed");
+    const result = yield* Effect.flip(consumeCompletion(Stream.fail(failure)));
+    expect(result).toBe(failure);
   })
 );

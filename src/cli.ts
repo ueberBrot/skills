@@ -1,4 +1,4 @@
-import { BunRuntime, BunServices } from "@effect/platform-bun";
+import { BunRuntime } from "@effect/platform-bun";
 import { Console, Effect, Layer, Option, Path, Schema } from "effect";
 import {
   CliConfig,
@@ -17,6 +17,7 @@ import {
 } from "./assessment";
 import { ConditionSchema, JsonObjectSchema } from "./domain";
 import { HarnessError } from "./errors";
+import { platform } from "./internal/platform";
 import { executeSuite, replaySuite } from "./runs";
 import { discoverSkills } from "./skills";
 import { loadSelectedSuite, validateRepository } from "./suites";
@@ -248,13 +249,13 @@ const cliProgram = (argv: readonly string[] = process.argv.slice(2)) => {
 
       const { exitCode: code, summary } = yield* executeSuite(suite, output, {
         concurrency: values.concurrency,
-        conditions,
         logEvents: values.logEvents,
         model: values.model,
         repetitions: values.repetitions,
         seed: values.seed,
         settings: values.settings,
         timeout: values.timeout,
+        conditions,
       }).pipe(Effect.provide(writerLayer(writer)));
 
       exitCode = code;
@@ -475,7 +476,7 @@ const cliProgram = (argv: readonly string[] = process.argv.slice(2)) => {
     Effect.provide(
       Layer.mergeAll(
         presenter,
-        BunServices.layer,
+        platform,
         CliConfig.layer({
           builtIns: GlobalFlag.BuiltIns.filter(
             (flag) => flag !== GlobalFlag.Version

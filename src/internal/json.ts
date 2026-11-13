@@ -1,6 +1,5 @@
 import {
   Array as Arr,
-  Crypto,
   Effect,
   FileSystem,
   Predicate,
@@ -8,6 +7,7 @@ import {
   Record,
   Schema,
 } from "effect";
+import { Digest, SecureRandom } from "effect/crypto";
 
 import type { JsonValue } from "../domain";
 
@@ -27,8 +27,16 @@ export const defined = <T>(value: T | undefined): T => {
   return value;
 };
 
-export const sha256 = (value: string | Uint8Array): string =>
-  new Bun.CryptoHasher("sha256").update(value).digest("hex");
+export const sha256 = Effect.fnUntraced(function* sha256(
+  value: string | Uint8Array
+) {
+  const digest = yield* Digest.Digest;
+
+  return yield* digest.digestHex(
+    Digest.sha256,
+    Predicate.isString(value) ? new TextEncoder().encode(value) : value
+  );
+});
 
 export const readJson = Effect.fn("readJson")(function* readJson(
   filePath: string
@@ -46,13 +54,13 @@ export const writeJson = Effect.fn("writeJson")(function* writeJson(
   space?: number
 ) {
   const fs = yield* FileSystem.FileSystem;
-  const crypto = yield* Crypto.Crypto;
+  const random = yield* SecureRandom.SecureRandom;
 
   const serialized = yield* Schema.encodeEffect(
     Schema.fromJsonString(Schema.Json, { space: space ?? 2 })
   )(value);
 
-  const temporary = `${filePath}.${yield* crypto.randomUUIDv4()}.tmp`;
+  const temporary = `${filePath}.${yield* random.uuidV4()}.tmp`;
   yield* Effect.gen(function* commitJson() {
     yield* fs.writeFileString(temporary, `${serialized}\n`);
     yield* fs.rename(temporary, filePath);

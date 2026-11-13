@@ -17,5 +17,6 @@
     "benchmarks/**/*.ts",
     "evals/**/*.ts",
     "vite.config.ts"
-  ]
+  ],
+  "exclude": ["evals/critic-loop/fixtures/**"]
 }

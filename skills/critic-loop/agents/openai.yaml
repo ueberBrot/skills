@@ -1,0 +1,4 @@
+interface:
+  display_name: "Critic Loop"
+  short_description: "Refine work with fresh independent critic reviews"
+  default_prompt: "Use $critic-loop to improve this deliverable until it meets the quality gate or reaches the round limit."

@@ -1,3 +1,6 @@
+import { BunRuntime } from "@effect/platform-bun";
+import { Console } from "effect";
+
 import type { ReasoningLevel } from "@tanstack/ai";
 import type { CodexModel } from "@tanstack/ai-codex";
 
@@ -13,4 +16,4 @@ const profile = {
   timeout: 300,
 };
 
-process.stdout.write(`${JSON.stringify(profile, null, 2)}\n`);
+BunRuntime.runMain(Console.log(JSON.stringify(profile, null, 2)));

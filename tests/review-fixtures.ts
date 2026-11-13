@@ -19,11 +19,11 @@ export const sampleRun = (): RunArtifact => {
     },
     spec: {
       anchors: ["24 hours"],
-      id,
-      language,
       provenance: "synthetic-regression",
       reader_questions: ["How long should the reader wait?"],
       task: "email",
+      id,
+      language,
     },
   }));
 
@@ -51,7 +51,6 @@ export const sampleRun = (): RunArtifact => {
       CONDITIONS.map((condition, index) => ({
         anchors_pass: true,
         case_id: record.fixture.id,
-        condition,
         duration_seconds: 1,
         language: record.spec.language,
         output: `Grüße — ${["first", "second", "third"][index]}: wait 24 hours before retrying.\nThank you.`,
@@ -60,6 +59,7 @@ export const sampleRun = (): RunArtifact => {
         split: "development",
         status: "success",
         task: record.spec.task,
+        condition,
       }))
     ),
   });

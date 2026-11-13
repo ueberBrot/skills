@@ -129,8 +129,8 @@ export const loadRun = Effect.fn("loadRun")(function* loadRun(
   return {
     artifact: view.artifact,
     directory: path.dirname(file),
-    file,
     inputs: [file],
+    file,
     view,
   };
 });

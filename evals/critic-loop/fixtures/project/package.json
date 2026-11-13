@@ -1,0 +1,13 @@
+{
+  "name": "maple-retry",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsrs --noEmit",
+    "lint": "vp lint src",
+    "format:check": "vp fmt --check src tests package.json tsconfig.json vite.config.ts",
+    "format": "vp fmt src tests package.json tsconfig.json vite.config.ts",
+    "test": "bun test",
+    "check": "bun run typecheck && bun run lint && bun run format:check && bun run test"
+  }
+}

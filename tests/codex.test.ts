@@ -83,12 +83,12 @@ const installStub = async (
 
   const configuration = {
     capabilities: options.capabilities ?? true,
-    captures,
     login: options.login ?? "Logged in using ChatGPT",
     loginStream: options.loginStream ?? "stderr",
     mode: options.mode ?? "valid",
     output: OUTPUT,
     sentinel: SENTINEL,
+    captures,
   } satisfies CodexFixtureConfiguration;
 
   await Bun.write(

@@ -1,5 +1,5 @@
 import { EventType } from "@tanstack/ai/client";
-import { Duration, Effect, Schema, Stream } from "effect";
+import { Effect, Schema, Stream } from "effect";
 
 import { HarnessError } from "../errors";
 
@@ -108,33 +108,10 @@ const collectChunk = Effect.fnUntraced(function* collectChunk(
   return state;
 });
 
-const finishIterator = Effect.fnUntraced(function* finishIterator(
-  controller: AbortController,
-  iterator: AsyncIterator<StreamChunk>
-) {
-  controller.abort();
-  const close = iterator.return?.bind(iterator);
-
-  if (close !== undefined) {
-    yield* Effect.tryPromise({
-      catch: executionError,
-      try: async () => await close(),
-    }).pipe(Effect.timeout(Duration.seconds(2)), Effect.ignore);
-  }
-});
-
-export const consumeCompletion = Effect.fnUntraced(function* consumeCompletion(
-  stream: AsyncIterable<StreamChunk>,
-  controller: AbortController
-) {
-  const iterator = stream[Symbol.asyncIterator]();
-
-  yield* Effect.addFinalizer(() => finishIterator(controller, iterator));
-
-  const state = yield* Stream.fromAsyncIterable(
-    { [Symbol.asyncIterator]: () => iterator },
-    executionError
-  ).pipe(
+export const consumeCompletion = Effect.fnUntraced(function* consumeCompletion<
+  E,
+>(stream: Stream.Stream<StreamChunk, E>) {
+  const state = yield* stream.pipe(
     Stream.runFoldEffect(
       (): CompletionState => ({
         completed: 0,

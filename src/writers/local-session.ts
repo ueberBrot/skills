@@ -5,11 +5,14 @@ import {
 } from "@tanstack/ai-sandbox";
 import { localProcessSandbox } from "@tanstack/ai-sandbox-local-process";
 import { Effect } from "effect";
+import { SecureRandom } from "effect/crypto";
 
 import { HarnessError } from "../errors";
 import { consumeCompletion } from "./completion";
 
 import type { StreamChunk } from "@tanstack/ai";
+import type { AIError } from "@tanstack/ai-effect";
+import type { Stream } from "effect";
 
 interface LocalSessionOptions {
   readonly environment: Readonly<Record<string, string>>;
@@ -18,7 +21,6 @@ interface LocalSessionOptions {
 }
 
 interface LocalSession {
-  readonly abortController: AbortController;
   readonly adapterEnvironment: Record<string, string>;
   readonly middleware: [ReturnType<typeof withSandbox>];
   readonly runId: string;
@@ -29,16 +31,9 @@ interface LocalSession {
 export const runLocalSession = Effect.fn("runLocalSession")(
   function* runLocalSession(
     options: LocalSessionOptions,
-    openStream: (session: LocalSession) => AsyncIterable<StreamChunk>
+    openStream: (session: LocalSession) => Stream.Stream<StreamChunk, AIError>
   ) {
-    const controller = yield* Effect.acquireRelease(
-      Effect.sync(() => new AbortController()),
-      (value) =>
-        Effect.sync(() => {
-          value.abort();
-        })
-    );
-
+    const random = yield* SecureRandom.SecureRandom;
     const passEnv = options.passEnv.filter((key) => key in options.environment);
 
     const scrubEnv = [
@@ -50,15 +45,15 @@ export const runLocalSession = Effect.fn("runLocalSession")(
 
     const sandbox = defineSandbox({
       fileEvents: false,
-      id: crypto.randomUUID(),
+      id: yield* random.uuidV4(),
       lifecycle: { destroyOnComplete: true, reuse: "none" },
       provider: localProcessSandbox({ passEnv, scrubEnv }),
       workspace: defineWorkspace({ source: { type: "none" } }),
     });
 
     const identity = {
-      runId: crypto.randomUUID(),
-      threadId: crypto.randomUUID(),
+      runId: yield* random.uuidV4(),
+      threadId: yield* random.uuidV4(),
     };
 
     // Early RUN_ERROR consumption can bypass the middleware's teardown hook.
@@ -82,7 +77,6 @@ export const runLocalSession = Effect.fn("runLocalSession")(
         }),
       try: () =>
         openStream({
-          abortController: controller,
           adapterEnvironment: Object.fromEntries(
             Object.entries(options.environment).filter(([key]) =>
               passEnv.includes(key)
@@ -94,7 +88,7 @@ export const runLocalSession = Effect.fn("runLocalSession")(
     });
 
     // Consume and close the lazy stream before this session's scope ends.
-    return yield* consumeCompletion(stream, controller);
+    return yield* consumeCompletion(stream);
   },
   Effect.scoped
 );

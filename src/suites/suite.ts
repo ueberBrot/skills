@@ -325,21 +325,27 @@ export const loadSuite = Effect.fn("loadSuite")(function* loadSuite(
     cases: records,
     reference: (name) =>
       decoder.decode(defined(files.get(path.join(skill, name)))),
-    shortPrompt,
     skill: skillText,
+    shortPrompt,
   });
 
   return Object.freeze({
-    assess,
     cases: Object.freeze(records),
     name: spec.name,
-    promptFor,
     provenance: Object.freeze(
       Object.fromEntries(
-        [...files].map(([file, bytes]) => [file, sha256(bytes)])
+        yield* traverse(
+          files,
+          Effect.fnUntraced(function* hashSource([file, bytes]) {
+            return [file, yield* sha256(bytes)] as const;
+          }),
+          { concurrency: 8 }
+        )
       )
     ),
     skillName: metadata.name,
+    assess,
+    promptFor,
   } satisfies LoadedSuite);
 });
 

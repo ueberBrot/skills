@@ -326,7 +326,7 @@ test.skipIf(process.platform === "win32")(
     await Bun.write(
       worker,
       `
-import { BunServices } from ${JSON.stringify(import.meta.resolve("@effect/platform-bun"))};
+import { platform } from ${JSON.stringify(new URL("../src/internal/platform.ts", import.meta.url).pathname)};
 import { Effect } from ${JSON.stringify(import.meta.resolve("effect"))};
 import { initializeCheckpoint } from ${JSON.stringify(checkpointModule)};
 await Effect.runPromise(Effect.gen(function*() {
@@ -334,7 +334,7 @@ await Effect.runPromise(Effect.gen(function*() {
   yield* checkpoint.commit(${JSON.stringify(result("first"))});
   yield* Effect.promise(() => Bun.write(${JSON.stringify(marker)}, "committed"));
   yield* Effect.never;
-}).pipe(Effect.provide(BunServices.layer)));
+}).pipe(Effect.provide(platform)));
 `
     );
 

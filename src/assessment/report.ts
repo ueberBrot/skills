@@ -175,7 +175,6 @@ const assessRun = Effect.fn("assessRun")(function* assessRun(
         anchors_failed: 0,
         anchors_not_applicable: 0,
         anchors_passed: 0,
-        condition,
         evaluation_errors: 0,
         execution_errors: 0,
         expected: 0,
@@ -193,6 +192,7 @@ const assessRun = Effect.fn("assessRun")(function* assessRun(
         split: record.spec.split,
         successful: 0,
         task: record.spec.task,
+        condition,
       };
 
       groups.set(key, row);

@@ -4,7 +4,7 @@ import { ConditionSchema, JsonObjectSchema, sampleKey } from "../domain";
 import { HarnessError } from "../errors";
 import { canonicalJson, sha256, shuffle } from "../internal/json";
 
-import type { CaseRecord, Condition, Result, RunArtifact } from "../domain";
+import type { CaseRecord, Condition, Result } from "../domain";
 import type { RunView } from "../runs";
 
 const SkippedSchema = Schema.Struct({
@@ -112,8 +112,6 @@ export const ComprehensionPacketSchema = Schema.Struct({
 
 export type ComprehensionPacket = typeof ComprehensionPacketSchema.Type;
 
-const runHash = (run: RunArtifact): string => sha256(canonicalJson(run));
-
 interface PairedGroup {
   record: CaseRecord;
   repetition: number;
@@ -216,12 +214,12 @@ export const planReview = Effect.fn("planReview")(function* planReview(
 
   const { complete, skipped } = pairedGroups(view, selected);
 
-  const hash = runHash(run);
+  const hash = yield* sha256(canonicalJson(run));
 
   const selection =
     conditions === undefined ? "" : `:${canonicalJson(selected)}`;
 
-  const reviewId = sha256(`${hash}:${seed}${selection}`).slice(0, 20);
+  const reviewId = (yield* sha256(`${hash}:${seed}${selection}`)).slice(0, 20);
   const comparisons: (typeof ComparisonSchema.Type)[] = [];
   const judgments: Judgments["trials"] = [];
   const trials: Decoding["trials"] = [];
@@ -288,13 +286,13 @@ export const planReview = Effect.fn("planReview")(function* planReview(
       const itemId = `R${String(readerItems.length + 1).padStart(4, "0")}`;
       readerItems.push({
         item_id: itemId,
-        output,
         questions: group.record.spec.reader_questions.map((question) => ({
           answer: null,
           question,
         })),
+        output,
       });
-      readerMapping.push({ item_id: itemId, label, trial_id: trialId });
+      readerMapping.push({ item_id: itemId, trial_id: trialId, label });
     }
   }
 
@@ -321,7 +319,7 @@ export const planReview = Effect.fn("planReview")(function* planReview(
       items: yield* shuffle(readerItems, `${seed}:readers`),
       review_id: reviewId,
     },
-    decoding,
     judgments: { review_id: reviewId, trials: judgments },
+    decoding,
   };
 });

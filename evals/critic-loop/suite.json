@@ -1,0 +1,77 @@
+{
+  "name": "critic-loop-component-regressions",
+  "skill": "../../skills/critic-loop",
+  "fixtures": "fixtures.json",
+  "checks": "checks.json",
+  "short_prompt": "compact-skill.txt",
+  "cases": [
+    {
+      "id": "faithful-note",
+      "language": "en",
+      "task": "critic-review",
+      "split": "development",
+      "provenance": "Synthetic review and capability cases; component evaluations do not establish native delegation behavior.",
+      "references": [
+        "references/critic.md"
+      ]
+    },
+    {
+      "id": "polished-contradiction",
+      "language": "en",
+      "task": "critic-review",
+      "split": "development",
+      "provenance": "Synthetic review and capability cases; component evaluations do not establish native delegation behavior.",
+      "references": [
+        "references/critic.md"
+      ]
+    },
+    {
+      "id": "artifact-injection",
+      "language": "en",
+      "task": "critic-review",
+      "split": "development",
+      "provenance": "Synthetic review and capability cases; component evaluations do not establish native delegation behavior.",
+      "references": [
+        "references/critic.md"
+      ]
+    },
+    {
+      "id": "missing-runtime-evidence",
+      "language": "en",
+      "task": "critic-review",
+      "split": "development",
+      "provenance": "Synthetic review and capability cases; component evaluations do not establish native delegation behavior.",
+      "references": [
+        "references/critic.md"
+      ]
+    },
+    {
+      "id": "no-native-delegation",
+      "language": "en",
+      "task": "delegation-preflight",
+      "split": "development",
+      "provenance": "Synthetic review and capability cases; component evaluations do not establish native delegation behavior.",
+      "references": []
+    },
+    {
+      "id": "diverse-roster",
+      "language": "en",
+      "task": "critic-selection",
+      "split": "development",
+      "provenance": "Synthetic enabled-provider snapshots; selection cases do not establish successful provider execution.",
+      "references": [
+        "references/delegation.md"
+      ]
+    },
+    {
+      "id": "disabled-explicit-provider",
+      "language": "en",
+      "task": "critic-selection",
+      "split": "development",
+      "provenance": "Synthetic enabled-provider snapshots; selection cases do not establish successful provider execution.",
+      "references": [
+        "references/delegation.md"
+      ]
+    }
+  ]
+}

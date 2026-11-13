@@ -3,7 +3,8 @@ import { DateTime, Effect, Path, Semaphore } from "effect";
 import { compareText, writeJson } from "../internal/json";
 
 import type { Result, RunArtifact } from "../domain";
-import type { Crypto, FileSystem } from "effect";
+import type { FileSystem } from "effect";
+import type { SecureRandom } from "effect/crypto";
 
 /** Publish immutable candidate snapshots; only successful renames advance state. */
 export const initializeCheckpoint = Effect.fnUntraced(
@@ -13,7 +14,7 @@ export const initializeCheckpoint = Effect.fnUntraced(
     const lock = yield* Semaphore.make(1);
 
     const context = yield* Effect.context<
-      Crypto.Crypto | FileSystem.FileSystem
+      FileSystem.FileSystem | SecureRandom.SecureRandom
     >();
 
     yield* writeJson(file, artifact, 0);

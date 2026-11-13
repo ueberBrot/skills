@@ -122,16 +122,16 @@ const assessSample = Effect.fn("assessSample")(function* assessSample(
   }
 
   return {
-    answers,
     case_id: result.case_id,
     condition: result.condition,
-    fidelity,
     language: result.language,
     questions_expected: record.spec.reader_questions.length,
     repetition: result.repetition,
-    scores,
     split: result.split,
     task: result.task,
+    answers,
+    fidelity,
+    scores,
   };
 });
 
@@ -162,8 +162,8 @@ const comparePair = Effect.fn("comparePair")(function* comparePair(
 
   const identity = {
     case_id: record.fixture.id,
-    repetition,
     task: "comparison" as const,
+    repetition,
   };
 
   const forward = yield* grader.execute(
@@ -183,14 +183,14 @@ const comparePair = Effect.fn("comparePair")(function* comparePair(
 
   return {
     case_id: record.fixture.id,
-    conditions,
-    forward,
     language: record.spec.language,
     preference: normal === flipped ? normal : "inconclusive",
-    repetition,
-    reverse,
     split: record.spec.split,
     task: record.spec.task,
+    conditions,
+    forward,
+    repetition,
+    reverse,
   };
 });
 
@@ -283,11 +283,11 @@ export const gradeRun = Effect.fn("gradeRun")(function* gradeRun(
   yield* writer.validate({ model: options.model, settings: options.settings });
 
   const identity = {
-    answer_keys_hash: rawKeys === null ? null : sha256(rawKeys),
+    answer_keys_hash: rawKeys === null ? null : yield* sha256(rawKeys),
     executor: yield* Schema.decodeUnknownEffect(Schema.Json)(writer.descriptor),
     requested_model: options.model,
     requested_settings: options.settings,
-    run_hash: sha256(canonicalJson(artifact)),
+    run_hash: yield* sha256(canonicalJson(artifact)),
   };
 
   const manifestPath = path.join(output, "manifest.json");
@@ -332,8 +332,10 @@ export const gradeRun = Effect.fn("gradeRun")(function* gradeRun(
     "grading-summary.ts",
     "ownership.ts",
   ]) {
-    graderFileHashes[file] = sha256(
-      yield* fs.readFile(Bun.fileURLToPath(new URL(file, import.meta.url)))
+    graderFileHashes[file] = yield* sha256(
+      yield* fs.readFile(
+        yield* path.fromFileUrl(new URL(file, import.meta.url))
+      )
     );
   }
 
@@ -404,8 +406,8 @@ export const gradeRun = Effect.fn("gradeRun")(function* gradeRun(
 
   const grading = {
     calls: grader.calls.toSorted((a, b) => a.id - b.id),
-    comparisons,
     manifest: completedManifest,
+    comparisons,
     samples,
     summary,
   };

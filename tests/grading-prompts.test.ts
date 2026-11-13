@@ -19,8 +19,8 @@ const question = "How long should I wait?";
 
 const reference = {
   answer: "24 hours.",
-  question,
   reference_answer: "Wait 24 hours before retrying.",
+  question,
 };
 
 it.effect(

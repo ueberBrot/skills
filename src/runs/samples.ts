@@ -90,7 +90,6 @@ const outcomeResult = Effect.fnUntraced(function* outcomeResult(
       anchors_pass: anchors?.all_selected_anchors_present ?? null,
       case_id: record.fixture.id,
       completed_at: DateTime.formatIso(yield* DateTime.now),
-      condition,
       duration_seconds:
         Number((yield* Clock.currentTimeNanos) - startedNanos) / 1e9,
       error: outcome._tag === "Completed" ? null : outcome.message,
@@ -99,7 +98,6 @@ const outcomeResult = Effect.fnUntraced(function* outcomeResult(
       language: record.spec.language,
       missing_anchors: [...(anchors?.missing_from_rewrite ?? [])],
       output: response?.output ?? null,
-      repetition,
       reported_model: response?.model ?? null,
       reported_settings: response?.settings ?? null,
       split: record.spec.split,
@@ -107,6 +105,8 @@ const outcomeResult = Effect.fnUntraced(function* outcomeResult(
       status: outcome._tag === "Completed" ? "success" : "error",
       task: record.spec.task,
       usage: response?.usage ?? null,
+      condition,
+      repetition,
     },
     { onExcessProperty: "error" }
   );
@@ -123,8 +123,8 @@ export const runSamples = Effect.fnUntraced(function* runSamples(
 
   const artifact: RunArtifact = {
     cases: [...suite.cases],
-    manifest,
     results: [],
+    manifest,
   };
 
   const jobs = yield* shuffle(
@@ -170,8 +170,8 @@ export const runSamples = Effect.fnUntraced(function* runSamples(
 
       yield* emit({
         case_id: record.fixture.id,
-        condition,
         name: "sample.started",
+        condition,
         repetition,
       });
 

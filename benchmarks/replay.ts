@@ -1,11 +1,16 @@
-import { mkdtemp, rm, stat } from "node:fs/promises";
-import os from "node:os";
-import path from "node:path";
-
-import { BunServices } from "@effect/platform-bun";
-import { Effect, FileSystem, Schema } from "effect";
+import { BunRuntime } from "@effect/platform-bun";
+import {
+  Clock,
+  Console,
+  Effect,
+  FileSystem,
+  Path,
+  Schedule,
+  Schema,
+} from "effect";
 
 import { writeJson } from "../src/internal/json";
+import { platform } from "../src/internal/platform";
 import { replaySuite } from "../src/runs";
 
 import type { CaseRecord, RunArtifact } from "../src/domain";
@@ -55,28 +60,13 @@ const makeSuite = (samples: number): LoadedSuite => {
 
   return {
     assess: () => Effect.succeed(null),
-    cases,
     name: "replay-scaling",
     promptFor: (id) => `Return ${id}: ${payload}`,
     provenance: {},
     skillName: "synthetic-performance-workload",
+    cases,
   };
 };
-
-const directory = await mkdtemp(
-  path.join(os.tmpdir(), "skills-replay-benchmark-")
-);
-
-const destination = path.join(directory, "run");
-const source = path.join(directory, "outputs.json");
-const suite = makeSuite(parameters.mode === "replay" ? parameters.samples : 1);
-
-await Bun.write(
-  source,
-  JSON.stringify(
-    suite.cases.map(({ fixture }) => ({ id: fixture.id, output: payload }))
-  )
-);
 
 const writes: { bytes: number; duration_ms: number; checkpoint: boolean }[] =
   [];
@@ -90,10 +80,32 @@ const sampleMemory = () => {
   peakHeap = Math.max(peakHeap, memory.heapUsed);
 };
 
-const sampler = setInterval(sampleMemory, 5);
-const started = performance.now();
+const benchmark = Effect.gen(function* benchmark() {
+  const filesystem = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
 
-try {
+  const directory = yield* filesystem.makeTempDirectoryScoped({
+    prefix: "skills-replay-benchmark-",
+  });
+
+  const destination = path.join(directory, "run");
+  const source = path.join(directory, "outputs.json");
+
+  const suite = makeSuite(
+    parameters.mode === "replay" ? parameters.samples : 1
+  );
+
+  yield* filesystem.writeFileString(
+    source,
+    JSON.stringify(
+      suite.cases.map(({ fixture }) => ({ id: fixture.id, output: payload }))
+    )
+  );
+  yield* Effect.forkChild(
+    Effect.repeat(Effect.sync(sampleMemory), Schedule.spaced("5 millis"))
+  );
+  const started = yield* Clock.currentTimeNanos;
+
   const measured = Effect.gen(function* measured() {
     const { artifact: initial } = yield* replaySuite(
       suite,
@@ -123,39 +135,40 @@ try {
         })),
       } satisfies RunArtifact;
       writes.length = 0;
-      const encodeStart = performance.now();
+      const encodeStart = yield* Clock.currentTimeNanos;
       yield* Schema.encodeEffect(
         Schema.fromJsonString(Schema.Json, {
           space: Number(parameters.snapshotSpace),
         })
       )(artifact);
-      serializationMs = performance.now() - encodeStart;
-      const snapshotStart = performance.now();
+      serializationMs =
+        Number((yield* Clock.currentTimeNanos) - encodeStart) / 1e6;
+      const snapshotStart = yield* Clock.currentTimeNanos;
       yield* writeJson(
         path.join(directory, "run.json"),
         artifact,
         Number(parameters.snapshotSpace)
       );
-      snapshotMs = performance.now() - snapshotStart;
+      snapshotMs =
+        Number((yield* Clock.currentTimeNanos) - snapshotStart) / 1e6;
     }
 
     return { artifact, serializationMs, snapshotMs };
   });
 
   const measuredWithFilesystem = Effect.gen(function* instrument() {
-    const filesystem = yield* FileSystem.FileSystem;
-
     return yield* measured.pipe(
       Effect.provideService(FileSystem.FileSystem, {
         ...filesystem,
         writeFileString: (file, data, options) =>
           Effect.gen(function* timedWrite() {
-            const start = performance.now();
+            const start = yield* Clock.currentTimeNanos;
             yield* filesystem.writeFileString(file, data, options);
             writes.push({
               bytes: Buffer.byteLength(data),
               checkpoint: path.basename(file).startsWith("run.json."),
-              duration_ms: performance.now() - start,
+              duration_ms:
+                Number((yield* Clock.currentTimeNanos) - start) / 1e6,
             });
             sampleMemory();
           }),
@@ -163,9 +176,7 @@ try {
     );
   });
 
-  const result = await Effect.runPromise(
-    measuredWithFilesystem.pipe(Effect.provide(BunServices.layer))
-  );
+  const result = yield* measuredWithFilesystem;
 
   sampleMemory();
   const checkpointWrites = writes.filter((write) => write.checkpoint);
@@ -182,12 +193,12 @@ try {
       ? path.join(directory, "run.json")
       : path.join(destination, "run.json");
 
-  const artifactStats = await stat(artifactFile);
+  const artifactStats = yield* filesystem.stat(artifactFile);
 
-  console.log(
+  yield* Console.log(
     JSON.stringify({
       ...parameters,
-      artifact_bytes: artifactStats.size,
+      artifact_bytes: Number(artifactStats.size),
       bun: Bun.version,
       checkpoint_bytes_written: checkpointWrites.reduce(
         (total, write) => total + write.bytes,
@@ -199,7 +210,7 @@ try {
       peak_sampled_rss_bytes: peakRss,
       serialization_ms: result.serializationMs,
       snapshot_ms: result.snapshotMs,
-      wall_ms: performance.now() - started,
+      wall_ms: Number((yield* Clock.currentTimeNanos) - started) / 1e6,
       write_latency_p50_ms: percentile(0.5),
       write_latency_p95_ms: percentile(0.95),
       write_ms: checkpointWrites.reduce(
@@ -208,7 +219,6 @@ try {
       ),
     })
   );
-} finally {
-  clearInterval(sampler);
-  await rm(directory, { force: true, recursive: true });
-}
+});
+
+BunRuntime.runMain(benchmark.pipe(Effect.scoped, Effect.provide(platform)));

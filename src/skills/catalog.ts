@@ -1,5 +1,6 @@
 import { Effect, FileSystem, Path, Schema } from "effect";
 import { forEach as traverse } from "effect/Effect";
+import { Yaml } from "effect/encoding";
 
 import { HarnessError } from "../errors";
 import { REPO } from "../paths";
@@ -56,7 +57,7 @@ export const parseSkill = Effect.fnUntraced(function* parseSkill(
   const yaml = yield* Effect.try({
     catch: () =>
       new HarnessError({ message: "Invalid YAML frontmatter in SKILL.md" }),
-    try: () => Bun.YAML.parse(frontmatter),
+    try: () => Yaml.parse(frontmatter),
   });
 
   const metadata = yield* Schema.decodeUnknownEffect(SkillMetadataSchema)(

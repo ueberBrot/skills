@@ -22,17 +22,22 @@ const expectRejected = async <T>(
   operation: Promise<T>,
   message?: string
 ): Promise<void> => {
-  const error = await operation.then(
-    () => {
-      throw new Error("Expected the operation to reject");
-    },
-    Schema.decodeUnknownSync(Schema.instanceOf(Error))
+  let rejected: unknown;
+
+  try {
+    await operation;
+  } catch (error) {
+    rejected = error;
+  }
+
+  const rejection = Schema.decodeUnknownSync(Schema.instanceOf(Error))(
+    rejected
   );
 
-  expect(error).toBeInstanceOf(Error);
+  expect(rejection).toBeInstanceOf(Error);
 
   if (message !== undefined) {
-    expect(error.message).toContain(message);
+    expect(rejection.message).toContain(message);
   }
 };
 
@@ -131,7 +136,7 @@ describe("suite loading", () => {
     const { path, root, spec } = await fixtureSuite();
     const input = { tickets: [{ category: "billing", priority: 3 }] };
     await json(nodePath.join(root, "cases.json"), [
-      { id: "structured-case", input, request: "Classify these tickets." },
+      { id: "structured-case", request: "Classify these tickets.", input },
     ]);
     await json(nodePath.join(root, "checks.json"), {
       "structured-case": ["PRIVATE_CHECK: classify every ticket."],
@@ -361,7 +366,7 @@ describe("suite loading", () => {
       Schema.fromJsonString(Schema.Array(FixtureSchema))
     )(new TextDecoder().decode(original));
 
-    expect(suite.provenance[fixturePath]).toBe(sha256(original));
+    expect(suite.provenance[fixturePath]).toBe(await run(sha256(original)));
 
     expect(suite.cases.map((record) => record.fixture)).toEqual([...snapshots]);
     expect(defined(suite.cases[0]).checks).toEqual([
@@ -398,7 +403,7 @@ describe("suite loading", () => {
       suite.provenance[
         await fs.realpath(nodePath.join(root, "skill/references/english.md"))
       ]
-    ).toBe(sha256("Preserve conditions.\n"));
+    ).toBe(await run(sha256("Preserve conditions.\n")));
     const development = await run(loadSuite(path, "development"));
     expect(development.cases[0]?.fixture.id).toBe("development-case");
   });

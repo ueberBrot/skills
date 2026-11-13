@@ -86,7 +86,7 @@ export const loadRecordings = Effect.fnUntraced(function* loadRecordings(
         });
       }
 
-      provenance[file] = sha256(bytes);
+      provenance[file] = yield* sha256(bytes);
       recordings.set(file, outputs);
 
       return [condition, outputs] as const;

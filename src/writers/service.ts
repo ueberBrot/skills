@@ -3,11 +3,13 @@ import { Context } from "effect";
 import type { JsonObject, WriterInput, WriterOutput } from "../domain";
 import type { HarnessError } from "../errors";
 import type { Effect, FileSystem, Path } from "effect";
+import type { SecureRandom } from "effect/crypto";
 import type { ChildProcessSpawner } from "effect/process";
 
 export type WriterPlatform =
   | FileSystem.FileSystem
   | Path.Path
+  | SecureRandom.SecureRandom
   | ChildProcessSpawner.ChildProcessSpawner;
 
 export interface WriterDescriptor {

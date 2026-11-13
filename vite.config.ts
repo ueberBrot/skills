@@ -6,7 +6,13 @@ import { selectJsPlugins } from "ultracite/oxlint/js-plugins";
 import { defineConfig } from "vite-plus";
 
 const jsPlugins = selectJsPlugins(["github", "sonarjs", "tsdoc"]);
-const evaluationData = ["evals/**/*.json", "evals/**/*.txt", "evals/**/*.md"];
+
+const evaluationData = [
+  "evals/**/*.json",
+  "evals/**/*.txt",
+  "evals/**/*.md",
+  "evals/critic-loop/fixtures/**",
+];
 
 export default defineConfig({
   envDir: false,

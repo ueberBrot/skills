@@ -111,11 +111,11 @@ const main = async (): Promise<number> => {
         "OPENAI_BASE_URL",
         "AZURE_OPENAI_API_KEY",
       ].filter((key) => key in process.env),
-      args,
       cwd: process.cwd(),
+      pid: process.pid,
+      args,
       generation,
       input,
-      pid: process.pid,
     })
   );
 

@@ -151,7 +151,7 @@ export const prepareCommand = Effect.fnUntraced(function* prepareCommand(
       metadata: { authentication: "adapter-defined", backend: "command" },
       name: "command",
     },
-    execute,
     validate: () => Effect.void,
+    execute,
   } satisfies PreparedWriter;
 });

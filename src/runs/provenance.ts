@@ -1,12 +1,7 @@
-import {
-  Crypto,
-  DateTime,
-  Effect,
-  FileSystem,
-  Path,
-  Schema,
-  Stream,
-} from "effect";
+import { createHash } from "node:crypto";
+
+import { DateTime, Effect, FileSystem, Path, Schema, Stream } from "effect";
+import { SecureRandom } from "effect/crypto";
 import { forEach as traverse } from "effect/Effect";
 
 import packageInfo from "../../package.json";
@@ -83,9 +78,10 @@ const gatherFiles = Effect.fnUntraced(function* gatherFiles(
   yield* traverse(
     new Set(locations.filter((filePath) => !hashes.has(filePath))),
     Effect.fnUntraced(function* hashFile(filePath) {
+      // Digest takes buffered bytes; executable provenance must stay streaming.
       const hasher = yield* fs.stream(filePath).pipe(
         Stream.runFold(
-          () => new Bun.CryptoHasher("sha256"),
+          () => createHash("sha256"),
           (hash, chunk) => hash.update(chunk)
         )
       );
@@ -106,7 +102,7 @@ export const makeManifest = Effect.fnUntraced(function* makeManifest(
   options: ManifestOptions,
   source: ManifestSource
 ) {
-  const crypto = yield* Crypto.Crypto;
+  const random = yield* SecureRandom.SecureRandom;
 
   const status = yield* gitValue(
     "status",
@@ -145,7 +141,6 @@ export const makeManifest = Effect.fnUntraced(function* makeManifest(
       file_hashes: yield* gatherFiles(suite, source),
       git_commit: yield* gitValue("rev-parse", "HEAD"),
       git_dirty: status === null ? null : status.length > 0,
-      limitations,
       mode: source._tag === "Live" ? "execute" : "replay",
       package_versions: {
         ...packageInfo.dependencies,
@@ -156,12 +151,13 @@ export const makeManifest = Effect.fnUntraced(function* makeManifest(
       repetitions: options.repetitions,
       requested_model: options.model ?? null,
       requested_settings: options.settings,
-      run_id: yield* crypto.randomUUIDv4(),
+      run_id: yield* random.uuidV4(),
       schema_version: 2,
       seed: options.seed,
       skill_name: suite.skillName,
       started_at: DateTime.formatIso(yield* DateTime.now),
       suite: suite.name,
+      limitations,
     },
     { onExcessProperty: "error" }
   );

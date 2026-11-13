@@ -57,11 +57,11 @@ const fixture = async () => {
 
   const options = {
     model: "gpt-6.1-terra" satisfies CodexModel,
-    out,
     settings: {
       model_reasoning_effort: "medium" satisfies ReasoningLevel,
     },
     timeout: 5,
+    out,
   };
 
   const prepare = async (resume: boolean) =>

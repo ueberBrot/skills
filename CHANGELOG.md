@@ -1,5 +1,12 @@
 # @ueberbrot/skills
 
+## 1.1.0
+
+### Minor Changes
+
+- 094c201: Add critic-loop for bounded revisions with fresh independent critics, optional
+  model panels, tool-backed verification, and JSONL run events.
+
 ## 1.0.0
 
 ### Patch Changes
